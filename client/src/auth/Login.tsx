@@ -62,8 +62,13 @@ const Login = () => {
         </div>
         <div className="mt-4">
             {
-          loading?<Button disabled ><Loader2 className=" h-4 w-4 animate-spin"/> Please wait</Button>:<div className="mt-5"><Button type="submit">login</Button></div>
-        }
+            loading ? <Button disabled ><Loader2 className="h-4 w-4 animate-spin" /> Please wait</Button> : <div className="mt-5">
+              <Button className="w-full" type="submit">login</Button></div>
+          }
+          <div className="pt-4 text-blue-500 hover:underline">
+             <Link to="/forgot-password" >Forgot password</Link>
+          </div>
+         
         </div>
       
         <Separator className="mt-4" />
