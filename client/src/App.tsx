@@ -1,56 +1,51 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import MainLayout from './MainLayout'
-import Login from './auth/Login'
-import Signup from './auth/Signup'
-import ForgotPassword from './auth/forgotPassword'
-import ResetPassword from './auth/ResetPassword'
-import VerifyEmail from './auth/VerifyEmail'
+import Login from "./auth/Login";
+import Signup from "./auth/Signup";
+import ForgotPassword from "./auth/ForgotPassword";
+import ResetPassword from "./auth/ResetPassword";
+import VerifyEmail from "./auth/VerifyEmail";
+import HeroSection from "./components/HeroSection";
+import MainLayout from "./Layout/MainLayout";
 
 const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
-    // children: [{
-    //   path:"/login"
-  // },
-    },
+    children: [
       {
-        path: "login",
-        element:<Login/>
+        path: "/",
+        element: <HeroSection />,
       },
-      {
-        path: "signup",
-        element:<Signup/>
-      },
-      {
-        path: "/forgot-password",
-        element:<ForgotPassword/>
-      },
-      {
-        path: "/reset-password",
-        element:<ResetPassword/>
-      },
-      {
-        path: "/verify-email",
-        element:<VerifyEmail/>
-      },
-    
-    ]
-  
-)
+    ],
+  },
+  {
+    path: "login",
+    element: <Login />,
+  },
+  {
+    path: "signup",
+    element: <Signup />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
+  },
+  {
+    path: "/verify-email",
+    element: <VerifyEmail />,
+  },
+]);
 function App() {
-
-
   return (
     <main>
-      <RouterProvider router={appRouter}/> 
-  
+      <RouterProvider router={appRouter} />
     </main>
-      
- 
-  )
+  );
 }
 
-export default App
+export default App;
