@@ -1,9 +1,9 @@
 import { Loader2, Mail, Plus } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Input } from "./ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Input } from "../components/ui/input";
 import { useRef, useState, type FormEvent } from "react";
-import { Label } from "./ui/label";
-import { Button } from "./ui/button";
+import { Label } from "../components/ui/label";
+import { Button } from "../components/ui/button";
 
 const Profile = () => {
   const loading = false;
