@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./db/connectDB";
 import userRoute from "./routes/user.route"
+import poiRoute from "./routes/poi.route"
+import queryRoute from "./routes/queryLog.route"
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -26,6 +28,8 @@ app.use(cors(corsOptions));
 
 // apis
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/poi", poiRoute);
+app.use("/api/v1/query", queryRoute);
 
 app.listen(PORT, () => {
     connectDB();
