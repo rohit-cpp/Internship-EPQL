@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { POI } from "../models/poi.model";
 
 import { QueryLog } from "../models/queryLog.model";
-import { encryptPOIData } from "../utlis/encryption";
+import { encryptPOIData, decryptPOIData as decryptPOIUtility } from "../utlis/encryption";
 
 // Create POI (ADMIN)
 export const createPOI = async (req: Request, res: Response) => {
@@ -74,10 +74,10 @@ export const decryptPOIData = async (req: Request, res: Response) => {
 
     if (!poi) return res.status(404).json({ message: "POI not found" });
 
-    // // Optional: Check permissions if sensitive
-    // const data = decryptPOIData(poi.encryptedData);
+    // Optional: Check permissions if sensitive
+    const data = decryptPOIUtility(poi.encryptedData);
 
-    // return res.status(200).json({ success: true, data });
+    return res.status(200).json({ success: true, data });
   } catch (err) {
     return res.status(500).json({ message: "Failed to decrypt POI data" });
   }
