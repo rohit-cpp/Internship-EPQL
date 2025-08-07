@@ -13,15 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import {
-  Divide,
-  Loader2,
-  Menu,
-  Moon,
-  ShoppingCart,
-  Sun,
-  User,
-} from "lucide-react";
+import { Loader2, Menu, Moon, ShoppingCart, Sun, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Navbar = () => {
@@ -112,8 +104,6 @@ const Navbar = () => {
 
 export default Navbar;
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,

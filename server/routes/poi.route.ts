@@ -10,29 +10,19 @@ import { isAutheticated } from "../middlewares/isAuthenticated";
 const router = express.Router();
 
 // Admin routes
-// router.route("/admin/poi")
-//   .post(isAutheticated, createPOI);
-
-// router.route("/admin/pois")
-//   .get(isAutheticated, listAllPOIs);
-
-// // User routes
-// router.route("/user/pois/search")
-//   .post(isAutheticated, queryPOIsInRange);
-
-// router.route("/user/poi/:poiId/decrypt")
-//   .get(isAutheticated, decryptPOI);
 router.route("/admin/poi")
-  .post( createPOI);
+  .post(isAutheticated, createPOI);
 
 router.route("/admin/pois")
-  .get( listAllPOIs);
+  .get(isAutheticated, listAllPOIs);
 
 // User routes
 router.route("/user/pois/search")
-  .post( queryPOIsInRange);
+  .post(isAutheticated, queryPOIsInRange);
 
 router.route("/user/poi/:poiId/decrypt")
-  .get( decryptPOI);
+  .get(isAutheticated, decryptPOI);
+
+
 
 export default router;
