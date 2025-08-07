@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 
 const VerifyEmail = () => {
   const inputRef = useRef<any>([]);
-  const navigate = useNavigate();
 
   const { loading, verifyEmail } = useUserStore();
+  const navigate = useNavigate();
 
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
 
@@ -37,7 +37,13 @@ const VerifyEmail = () => {
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const verificationCode: string = otp.join("");
-    await verifyEmail(verificationCode);
+
+    try {
+      await verifyEmail(verificationCode);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="flex flex-col items-center justify-center h-screen w-full">

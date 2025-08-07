@@ -17,8 +17,8 @@ import { Loader2, Menu, Moon, ShoppingCart, Sun, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Navbar = () => {
-  const admin = true;
-  const loading = false;
+  const { user, loading, logout } = useUserStore();
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex items-center justify-between h-14 mx-20">
@@ -27,34 +27,74 @@ const Navbar = () => {
           <h1 className="font-bold">EQPL</h1>
         </Link>
 
-        <div className="hidden md:flex items-center gap-10">
-          <div className="hidden md:flex items-center gap-6">
-            <Link to="/">Home</Link>
-            <Link to="/profile">Profile</Link>
-            <Link to="/order/status">Order</Link>
-
-            {admin && (
+        <div className="hidden md:flex items-center gap-8">
+          {user?.admin ? (
+            <div className="flex items-center gap-20">
+              <div className="space-x-6">
+                <Link to="/">Home</Link>
+                <Link to="/admin/upload-data">Upload</Link>
+                <Link to="/admin/managepoi">ManagePOI</Link>
+              </div>
               <Menubar>
                 <MenubarMenu>
                   <MenubarTrigger>
-                    Dashboard
+                    AdminMenu
                     <MenubarContent>
-                      <Link to="/admin/resturant">
-                        <MenubarItem>Resturant</MenubarItem>
+                      <Link to="/admin/dashboard">
+                        <MenubarItem>Dashboard</MenubarItem>
                       </Link>
-
-                      <Link to="/admin/resturant">
-                        <MenubarItem>Menu</MenubarItem>
+                      <Link to="/admin/data">
+                        <MenubarItem>Data</MenubarItem>
                       </Link>
-                      <Link to="/admin/resturant">
-                        <MenubarItem>Order</MenubarItem>
+                      <Link to="/admin/logs">
+                        <MenubarItem>Logs</MenubarItem>
                       </Link>
+                      {/* <Link to="/admin/managepoi">
+                        <MenubarItem>ManagePOI</MenubarItem>
+                      </Link>
+                      <Link to="/admin/upload-data">
+                        <MenubarItem>Upload</MenubarItem>
+                      </Link> */}
                     </MenubarContent>
                   </MenubarTrigger>
                 </MenubarMenu>
               </Menubar>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center gap-6">
+              <div className="flex items-center gap-20 ">
+                <div className="space-x-6">
+                  <Link to="/">Home</Link>
+                  <Link to="/searchpoi">SearchPOI</Link>
+                  <Link to="/decrypt">Decrypt</Link>
+                </div>
+                {/* <Link to="/history">History</Link>
+            <Link to="/profile">Profile</Link>
+            <Link to="/dashboard">Dashboard</Link> */}
+                <div>
+                  <Menubar>
+                    <MenubarMenu>
+                      <MenubarTrigger>
+                        UserMenu
+                        <MenubarContent>
+                          <Link to="/history">
+                            <MenubarItem>History</MenubarItem>
+                          </Link>
+                          <Link to="/profile">
+                            <MenubarItem>Profile</MenubarItem>
+                          </Link>
+                          <Link to="/dashboard">
+                            <MenubarItem>Dashboard</MenubarItem>
+                          </Link>
+                        </MenubarContent>
+                      </MenubarTrigger>
+                    </MenubarMenu>
+                  </Menubar>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center gap-4">
             <div>
               <DropdownMenu>
@@ -88,7 +128,7 @@ const Navbar = () => {
                   <Loader2 className="h-4 w-4 animate-spin" /> Please wait
                 </Button>
               ) : (
-                <Button>Logout</Button>
+                <Button onClick={logout}>Logout</Button>
               )}
             </div>
           </div>
@@ -115,7 +155,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { useUserStore } from "@/store/useUserStore";
 const MobileNavbar = () => {
+  const { user, logout, loading } = useUserStore();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -147,26 +189,94 @@ const MobileNavbar = () => {
           </div>
         </SheetHeader>
         <Separator></Separator>
-        <SheetDescription>
-          <Link
-            to="/profile"
-            className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
-          >
-            <User /> Profile
-          </Link>
-          <Link
-            to="/profile"
-            className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
-          >
-            <User /> Order
-          </Link>
-          <Link
-            to="/profile"
-            className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
-          >
-            <User /> Cart
-          </Link>
-        </SheetDescription>
+
+        {user?.admin ? (
+          <>
+            <Link
+              to="/"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User /> Home
+            </Link>
+            <Link
+              to="/admin/dashboard"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User /> Dashboard
+            </Link>
+            <Link
+              to="/admin/data"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User /> Data
+            </Link>
+            <Link
+              to="/admin/logs"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User /> Logs
+            </Link>
+            <Link
+              to="/admin/managepoi"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User /> ManagePOI
+            </Link>
+            <Link
+              to="/admin/upload-data"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User /> Upload
+            </Link>
+          </>
+        ) : (
+          <SheetDescription>
+            <Link
+              to="/"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User />
+              Home
+            </Link>
+            <Link
+              to="/searchpoi"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User />
+              SearchPOI
+            </Link>
+            <Link
+              to="/decrypt"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User />
+              Decrypt
+            </Link>
+
+            <Link
+              to="/history"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User />
+              History
+            </Link>
+            <Link
+              to="/profile"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User />
+              Profile
+            </Link>
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+            >
+              <User />
+              Dashboard
+            </Link>
+          </SheetDescription>
+        )}
+
         <SheetFooter>
           <div className="flex flex-row items-center gap-2">
             <Avatar>
@@ -176,9 +286,13 @@ const MobileNavbar = () => {
           </div>
 
           <div>
-            <Button type="submit" className="w-full">
-              Logout
-            </Button>
+            {loading ? (
+              <Button>
+                <Loader2 className="h-4 w-4 animate-spin" /> Please wait
+              </Button>
+            ) : (
+              <Button onClick={logout}>Logout</Button>
+            )}
           </div>
 
           <SheetClose></SheetClose>
