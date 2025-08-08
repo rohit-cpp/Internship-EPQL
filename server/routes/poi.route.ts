@@ -5,24 +5,24 @@ import {
   queryPOIsInRange,
   decryptPOIData as decryptPOI,
 } from "../controllers/poi.controller";
-import { isAutheticated } from "../middlewares/isAuthenticated";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
 
-const router = express.Router();
+
+const poiRouter = express.Router();
 
 // Admin routes
-router.route("/admin/poi")
-  .post(isAutheticated, createPOI);
+poiRouter.route("/admin/poi")
+  .post(isAuthenticated, createPOI);
 
-router.route("/admin/pois")
-  .get(isAutheticated, listAllPOIs);
+poiRouter.route("/admin/pois")
+  .get(isAuthenticated, listAllPOIs);
 
 // User routes
-router.route("/user/pois/search")
-  .post(isAutheticated, queryPOIsInRange);
+poiRouter.route("/user/pois/search")
+  .post(isAuthenticated, queryPOIsInRange);
 
-router.route("/user/poi/:poiId/decrypt")
-  .get(isAutheticated, decryptPOI);
+poiRouter.route("/user/poi/:poiId/decrypt")
+  .get(isAuthenticated, decryptPOI);
 
 
-
-export default router;
+export default poiRouter;

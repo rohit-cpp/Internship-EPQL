@@ -16,13 +16,16 @@ type User = {
     country: string;
     profilePicture: string;
     admin: boolean;
-    isVerified: boolean;
+  isVerified: boolean;
+  lastLogin: number;
 }
 type UserState = {
     user: User | null;
     isAuthenticated: boolean;
     isCheckingAuth: boolean;
     loading: boolean;
+    allUsers: User[];
+    getAllUsers: () => Promise<void>;
     signup: (input: SignupInputState) => Promise<void>;
     login: (input: LoginInputState) => Promise<void>;
     verifyEmail: (verificationCode:string) => Promise<void>;
@@ -41,6 +44,29 @@ export const useUserStore = create<UserState>()(
       isAuthenticated: false,
       isCheckingAuth: true,
       loading: false,
+
+      allUsers: [],
+       getAllUsers: async () => {
+        try {
+          set({ loading: true });
+          // Update the endpoint to match your backend!
+         const response = await axios.get(`${API_END_POINT}/all`); 
+          if (response.data.success) {
+            set({
+              allUsers: response.data.users,
+              loading: false,
+            });
+          } else {
+            toast.error(response.data.message || "Failed to fetch users");
+            set({ loading: false });
+          }
+        } catch (error: any) {
+          toast.error(
+            error.response?.data?.message || "Could not retrieve users"
+          );
+          set({ loading: false });
+        }
+      },
 
       //signup api implemetation
       signup: async (input: SignupInputState) => {
@@ -119,7 +145,6 @@ export const useUserStore = create<UserState>()(
           const response = await axios.get(`${API_END_POINT}/check-auth`);
           if (response.data.success) {
             set({
-            
               user: response.data.user,
               isAuthenticated: true,
               isCheckingAuth: false,
@@ -127,7 +152,6 @@ export const useUserStore = create<UserState>()(
           }
         } catch (error) {
           set({
-         
             isAuthenticated: false,
             isCheckingAuth: false,
           });

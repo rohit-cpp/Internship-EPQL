@@ -25,42 +25,42 @@ import AdminLogs from "./admin/AdminLogs";
 import ManagePOI from "./admin/ManagePOI";
 import UploadData from "./admin/UploadData";
 
-const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, user } = useUserStore();
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  if (!user?.isVerified) {
-    return <Navigate to="/verify-email" replace />;
-  }
-  return children;
-};
+// const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
+//   const { isAuthenticated, user } = useUserStore();
+//   if (!isAuthenticated) {
+//     return <Navigate to="/login" replace />;
+//   }
+//   if (!user?.isVerified) {
+//     return <Navigate to="/verify-email" replace />;
+//   }
+//   return children;
+// };
 
-const AuthenticatedUser = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, user } = useUserStore();
-  if (isAuthenticated && user?.isVerified) {
-    return <Navigate to="/" replace />;
-  }
-  return children;
-};
+// const AuthenticatedUser = ({ children }: { children: React.ReactNode }) => {
+//   const { isAuthenticated, user } = useUserStore();
+//   if (isAuthenticated && user?.isVerified) {
+//     return <Navigate to="/" replace />;
+//   }
+//   return children;
+// };
 
-const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, isAuthenticated } = useUserStore();
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  if (!user?.admin) {
-    return <Navigate to="/" replace />;
-  }
-  return children;
-};
+// const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+//   const { user, isAuthenticated } = useUserStore();
+//   if (!isAuthenticated) {
+//     return <Navigate to="/login" replace />;
+//   }
+//   if (!user?.admin) {
+//     return <Navigate to="/" replace />;
+//   }
+//   return children;
+// };
 const appRouter = createBrowserRouter([
   {
     path: "/",
     element: (
-      <ProtectedRoutes>
-        <MainLayout />
-      </ProtectedRoutes>
+      // <ProtectedRoutes>
+      <MainLayout />
+      // </ProtectedRoutes>
     ),
     children: [
       {
@@ -91,41 +91,41 @@ const appRouter = createBrowserRouter([
       {
         path: "/admin/dashboard",
         element: (
-          <AdminRoute>
-            <AdminDashboard />
-          </AdminRoute>
+          // <AdminRoute>
+          <AdminDashboard />
+          // {/* </AdminRoute> */}
         ),
       },
       {
         path: "/admin/data",
         element: (
-          <AdminRoute>
-            <AdminData />
-          </AdminRoute>
+          // <AdminRoute>
+          <AdminData />
+          // {/* </AdminRoute> */}
         ),
       },
       {
         path: "/admin/logs",
         element: (
-          <AdminRoute>
-            <AdminLogs />
-          </AdminRoute>
+          // <AdminRoute>
+          <AdminLogs />
+          // {/* </AdminRoute> */}
         ),
       },
       {
         path: "/admin/managepoi",
         element: (
-          <AdminRoute>
-            <ManagePOI />
-          </AdminRoute>
+          // <AdminRoute>
+          <ManagePOI />
+          // {/* </AdminRoute> */}
         ),
       },
       {
         path: "/admin/upload-data",
         element: (
-          <AdminRoute>
-            <UploadData />
-          </AdminRoute>
+          // <AdminRoute>
+          <UploadData />
+          // {/* </AdminRoute> */}
         ),
       },
     ],
@@ -133,25 +133,25 @@ const appRouter = createBrowserRouter([
   {
     path: "/login",
     element: (
-      <AuthenticatedUser>
-        <Login />
-      </AuthenticatedUser>
+      // <AuthenticatedUser>
+      <Login />
+      // </AuthenticatedUser>
     ),
   },
   {
     path: "/signup",
     element: (
-      <AuthenticatedUser>
-        <Signup />
-      </AuthenticatedUser>
+      // <AuthenticatedUser>
+      <Signup />
+      // </AuthenticatedUser>
     ),
   },
   {
     path: "/forgot-password",
     element: (
-      <AuthenticatedUser>
-        <ForgotPassword />
-      </AuthenticatedUser>
+      // <AuthenticatedUser>
+      <ForgotPassword />
+      // </AuthenticatedUser>
     ),
   },
   {
@@ -164,15 +164,15 @@ const appRouter = createBrowserRouter([
   },
 ]);
 function App() {
-  const { checkAuthentication, isCheckingAuth } = useUserStore();
-  useEffect(() => {
-    // checking auth every time when page isloaded
-    checkAuthentication();
-  }, [checkAuthentication]);
-  if (isCheckingAuth) return <Loading />;
+  // const { checkAuthentication, isCheckingAuth } = useUserStore();
+  // useEffect(() => {
+  //   // checking auth every time when page isloaded
+  //   checkAuthentication();
+  // }, [checkAuthentication]);
+  // if (isCheckingAuth) return <Loading />;
   return (
     <main>
-      <RouterProvider router={appRouter}></RouterProvider>
+      <RouterProvider router={appRouter} />
     </main>
   );
 }

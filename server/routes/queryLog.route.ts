@@ -5,26 +5,27 @@ import {
   getUserQueryLogs,
   deleteQueryLog,
 } from "../controllers/queryLog.controller";
-import { isAutheticated } from "../middlewares/isAuthenticated";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 
-const router = express.Router();
+
+const queryRouter = express.Router();
 
 // Usually creation of logs is internal, exposed here optionally
-router.route("/")
-  .post(isAutheticated, createQueryLog);
+queryRouter.route("/")
+  .post(isAuthenticated, createQueryLog);
 
 // Admin: get all logs
-router.route("/all")
-  .get(isAutheticated, getAllQueryLogs);
+queryRouter.route("/all")
+  .get(isAuthenticated, getAllQueryLogs);
 
 // User: get own logs
-router.route("/me")
-  .get(isAutheticated, getUserQueryLogs);
+queryRouter.route("/me")
+  .get(isAuthenticated, getUserQueryLogs);
 
 // Admin: delete a log
-router.route("/:logId")
-  .delete(isAutheticated, deleteQueryLog);
+queryRouter.route("/:logId")
+  .delete(isAuthenticated, deleteQueryLog);
 
 
-export default router;
+export default queryRouter;
