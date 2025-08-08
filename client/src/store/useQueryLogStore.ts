@@ -17,6 +17,7 @@ type QueryLog = {
 type QueryLogState = {
   logs: QueryLog[];
   loading: boolean;
+  hasFetchedLogs: boolean;
 
   createLog: (input: {
     queryType: string;
@@ -31,9 +32,10 @@ type QueryLogState = {
 
 export const useQueryLogStore = create<QueryLogState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       logs: [],
       loading: false,
+      hasFetchedLogs: false,
 
       createLog: async (input) => {
         try {
@@ -47,15 +49,23 @@ export const useQueryLogStore = create<QueryLogState>()(
           });
 
           if (resp.data.success) {
-            set((state) => ({
-              logs: [resp.data.log, ...state.logs],
-              loading: false,
-            }));
+            set((state) => {
+              const existingLog = state.logs.find(
+                (log) => log._id === resp.data.log._id
+              );
+              if (!existingLog) {
+                return {
+                  logs: [resp.data.log, ...state.logs],
+                  loading: false,
+                };
+              }
+              return { loading: false };
+            });
             toast.success("Query log created");
           }
         } catch (err: any) {
-          toast.error(err.response?.data?.message || "Error creating query log");
           set({ loading: false });
+          toast.error(err.response?.data?.message || "Error creating query log");
         }
       },
 
@@ -79,6 +89,8 @@ export const useQueryLogStore = create<QueryLogState>()(
       },
 
       getUserLogs: async () => {
+        if (get().hasFetchedLogs) return; // ✅ Prevent re-fetching
+
         try {
           set({ loading: true });
           const token = localStorage.getItem("token") || "";
@@ -89,7 +101,11 @@ export const useQueryLogStore = create<QueryLogState>()(
           });
 
           if (resp.data.success) {
-            set({ logs: resp.data.logs, loading: false });
+            set({
+              logs: resp.data.logs,
+              loading: false,
+              hasFetchedLogs: true, // ✅ Mark as fetched
+            });
           }
         } catch (err) {
           toast.error("Failed to fetch user logs");

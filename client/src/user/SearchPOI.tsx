@@ -1,125 +1,304 @@
-import { useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMapEvents,
-  Popup,
-} from "react-leaflet";
-import L from "leaflet";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
+import {
+  Search,
+  MapPin,
+  Crosshair,
+  Filter,
+  Eye,
+  Lock,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
+import { usePOIStore } from "@/store/usePoiStore";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
-// Fix default icon issue in Leaflet + React
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
-let DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-});
-L.Marker.prototype.options.icon = DefaultIcon;
-
-interface LatLng {
-  lat: number;
-  lng: number;
+interface SearchForm {
+  longitude: string;
+  latitude: string;
+  distance: number;
 }
 
-const defaultPosition: LatLng = {
-  lat: 18.5204,
-  lng: 73.8567,
-};
+const SearchPOI = () => {
+  const { queryPOIsInRange, pois, loading, decryptPOIData, decryptedPOIData } =
+    usePOIStore();
+  const [form, setForm] = useState<SearchForm>({
+    longitude: "",
+    latitude: "",
+    distance: 5000,
+  });
+  const [searchPerformed, setSearchPerformed] = useState(false);
+  const [selectedPOI, setSelectedPOI] = useState<string | null>(null);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
-export default function SearchPOI() {
-  const [position, setPosition] = useState<LatLng>(defaultPosition);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResult, setSearchResult] = useState<string | null>(null);
-
-  const handleSubmit = () => {
-    console.log("Selected Location:", position);
-    // Extend here to use queryPOIsInRange from POI store or send to backend
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSearch = async () => {
-    if (!searchQuery) return;
+  const handleDistanceChange = (value: number[]) => {
+    setForm((prev) => ({ ...prev, distance: value[0] }));
+  };
 
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          searchQuery
-        )}`
+  const getCurrentLocation = () => {
+    if ("geolocation" in navigator) {
+      setIsGettingLocation(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setForm((prev) => ({
+            ...prev,
+            longitude: position.coords.longitude.toString(),
+            latitude: position.coords.latitude.toString(),
+          }));
+          setIsGettingLocation(false);
+          toast.success("Current location obtained successfully");
+        },
+        (error) => {
+          setIsGettingLocation(false);
+          toast.error("Failed to get current location");
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
       );
-      const data = await res.json();
-
-      if (data.length > 0) {
-        const { lat, lon, display_name } = data[0];
-        setPosition({ lat: parseFloat(lat), lng: parseFloat(lon) });
-        setSearchResult(display_name);
-      } else {
-        alert("No results found.");
-      }
-    } catch (error) {
-      alert("Failed to fetch location.");
+    } else {
+      toast.error("Geolocation is not supported by this browser");
     }
   };
 
-  function LocationMarker() {
-    useMapEvents({
-      click(e) {
-        setPosition({ lat: e.latlng.lat, lng: e.latlng.lng });
-        setSearchResult(null);
-      },
+  const handleSearch = async () => {
+    const { longitude, latitude, distance } = form;
+
+    if (!longitude.trim() || !latitude.trim()) {
+      toast.error("Please provide both latitude and longitude");
+      return;
+    }
+
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+
+    if (isNaN(lat) || lat < -90 || lat > 90) {
+      toast.error("Latitude must be between -90 and 90");
+      return;
+    }
+
+    if (isNaN(lng) || lng < -180 || lng > 180) {
+      toast.error("Longitude must be between -180 and 180");
+      return;
+    }
+
+    await queryPOIsInRange({
+      longitude: lng,
+      latitude: lat,
+      distance: distance,
     });
 
-    return (
-      <Marker position={position}>
-        <Popup>Selected Location</Popup>
-      </Marker>
-    );
-  }
+    setSearchPerformed(true);
+    setSelectedPOI(null);
+  };
+
+  const handleDecrypt = async (poiId: string) => {
+    setSelectedPOI(poiId);
+    await decryptPOIData(poiId);
+  };
+
+  const formatDistance = (meters: number) => {
+    if (meters < 1000) return `${meters}m`;
+    return `${(meters / 1000).toFixed(1)}km`;
+  };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-4">
-      <h2 className="text-2xl font-semibold">Select a Point of Interest</h2>
-
-      <div className="flex gap-2">
-        <input
-          type="text"
-          className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm"
-          placeholder="Search a location (e.g., India Gate)"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <Button onClick={handleSearch}>Search</Button>
-      </div>
-
-      <MapContainer
-        center={position}
-        zoom={13}
-        style={{ height: "400px", width: "100%" }}
-        scrollWheelZoom
-      >
-        <TileLayer
-          attribution="&copy; OpenStreetMap contributors"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <LocationMarker />
-      </MapContainer>
-
-      <div className="text-sm text-muted-foreground">
-        Selected Coordinates:{" "}
-        <strong>
-          {position.lat}, {position.lng}
-        </strong>
-        {searchResult && (
-          <div className="text-xs mt-1 text-gray-500">
-            Result: <em>{searchResult}</em>
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      {/* Search Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Search className="h-6 w-6" />
+            Search Points of Interest
+          </CardTitle>
+          <p className="text-muted-foreground">
+            Find encrypted POIs within a specified radius of your location
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Location Input */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Latitude</label>
+              <Input
+                name="latitude"
+                placeholder="e.g., 40.7128"
+                value={form.latitude}
+                onChange={handleChange}
+                type="number"
+                step="any"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Longitude</label>
+              <Input
+                name="longitude"
+                placeholder="e.g., -74.0060"
+                value={form.longitude}
+                onChange={handleChange}
+                type="number"
+                step="any"
+              />
+            </div>
           </div>
-        )}
-      </div>
 
-      <Button className="w-full" onClick={handleSubmit}>
-        Confirm Location
-      </Button>
+          {/* Get Current Location */}
+          <div className="flex justify-center">
+            <Button
+              variant="outline"
+              onClick={getCurrentLocation}
+              disabled={isGettingLocation}
+              className="flex items-center gap-2"
+            >
+              {isGettingLocation ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Crosshair className="h-4 w-4" />
+              )}
+              Use Current Location
+            </Button>
+          </div>
+
+          {/* Distance Slider */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium">Search Radius</label>
+              <Badge variant="outline">{formatDistance(form.distance)}</Badge>
+            </div>
+            <Slider
+              value={[form.distance]}
+              onValueChange={handleDistanceChange}
+              max={50000}
+              min={100}
+              step={100}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>100m</span>
+              <span>50km</span>
+            </div>
+          </div>
+
+          {/* Search Button */}
+          <Button
+            onClick={handleSearch}
+            disabled={loading}
+            className="w-full"
+            size="lg"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Searching...
+              </>
+            ) : (
+              <>
+                <Search className="mr-2 h-4 w-4" />
+                Search POIs
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Search Results */}
+      {searchPerformed && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                Search Results
+              </span>
+              <Badge variant="secondary">
+                {pois.length} POI{pois.length !== 1 ? "s" : ""} found
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {pois.length === 0 ? (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  No POIs found in the specified area. Try expanding your search
+                  radius or checking a different location.
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <div className="grid gap-4">
+                {pois.map((poi) => (
+                  <div
+                    key={poi._id}
+                    className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-semibold text-lg">{poi.title}</h3>
+                        <p className="text-muted-foreground">
+                          {poi.description}
+                        </p>
+                      </div>
+                      <Badge variant={poi.isActive ? "default" : "secondary"}>
+                        {poi.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                      <MapPin className="h-4 w-4" />
+                      <span>
+                        {poi.location.coordinates}, {poi.location.coordinates}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Lock className="h-4 w-4" />
+                        <span>Data encrypted</span>
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDecrypt(poi._id)}
+                        disabled={loading}
+                      >
+                        {selectedPOI === poi._id && loading ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Eye className="h-4 w-4 mr-2" />
+                        )}
+                        Decrypt Data
+                      </Button>
+                    </div>
+
+                    {/* Decrypted Data Display */}
+                    {selectedPOI === poi._id && decryptedPOIData && (
+                      <div className="mt-4 p-3 bg-gray-50 rounded border-l-4 border-green-500">
+                        <h4 className="font-medium text-sm mb-2 text-green-800">
+                          Decrypted Data:
+                        </h4>
+                        <pre className="text-sm whitespace-pre-wrap text-gray-700">
+                          {decryptedPOIData}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
-}
+};
+
+export default SearchPOI;

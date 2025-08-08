@@ -81,7 +81,7 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "/decrypt",
-        element: <Decrypt />,
+        element: <Decrypt poiId={""} />,
       },
       {
         path: "/history",
