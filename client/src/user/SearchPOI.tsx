@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 // Fix default icon issue in Leaflet + React
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
+
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
@@ -35,7 +36,7 @@ export default function SearchPOI() {
 
   const handleSubmit = () => {
     console.log("Selected Location:", position);
-    // Send to backend if needed
+    // Extend here to use queryPOIsInRange from POI store or send to backend
   };
 
   const handleSearch = async () => {
@@ -61,7 +62,6 @@ export default function SearchPOI() {
     }
   };
 
-  // Map click component (hook inside MapContainer)
   function LocationMarker() {
     useMapEvents({
       click(e) {

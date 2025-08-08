@@ -33,7 +33,8 @@ const Signup = () => {
     } // login api implemetation
     try {
       await signup(input);
-      navigate("/verify-email");
+      // navigate("/verify-email");
+      navigate("/");
     } catch (error) {
       console.log(error);
     }
