@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![EPLQ Logo](https://via.placeholder.com/200x100/4F46E5/FFFFFF?text=EPLQ)
+![EPLQ Logo](https://via.placeholder.com/200x100/4F46E5/FFFFFF?=EPLQ)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
@@ -139,21 +139,21 @@ Before you begin, ensure you have the following installed:
 git clone https://github.com/yourusername/eplq.git
 cd eplq
 
-text
+
 
 ### 2. Install Backend Dependencies
 
 cd backend
 npm install
 
-text
+
 
 ### 3. Install Frontend Dependencies
 
 cd ../frontend
 npm install
 
-text
+
 
 ### 4. Set Up Environment Variables
 
@@ -185,13 +185,13 @@ CLOUDINARY_API_SECRET=your-api-secret
 Encryption
 ENCRYPTION_KEY=your-32-character-encryption-key
 
-text
+
 
 #### Frontend `.env`
 VITE_API_BASE_URL=http://localhost:8001/api/v1
 VITE_APP_NAME=EPLQ
 
-text
+
 
 ---
 
@@ -207,18 +207,18 @@ Ubuntu
 sudo apt-get install -y mongodb
 
 Windows - Download from MongoDB official site
-text
+
 
 2. **Start MongoDB**:
 mongod --dbpath /path/to/your/db
 
-text
+
 
 3. **Create Database**:
 mongosh
 use eplq
 
-text
+
 
 ### Email Configuration
 
@@ -242,13 +242,13 @@ text
 cd backend
 npm run dev
 
-text
+
 
 2. **Start the Frontend**:
 cd frontend
 npm run dev
 
-text
+
 
 3. **Access the Application**:
 - Frontend: http://localhost:5173
@@ -260,13 +260,13 @@ text
 cd frontend
 npm run build
 
-text
+
 
 2. **Start Production Server**:
 cd backend
 npm run start
 
-text
+
 
 ---
 
@@ -304,17 +304,21 @@ text
 
 ### Request/Response Examples
 
-#### User Registration
-curl -X POST http://localhost:8001/api/v1/user/signup
+#### Admin Registration
+curl -X POST http://localhost:8001/api/v1/user/login
 -H "Content-Type: application/json"
 -d '{
-"fullname": "John Doe",
-"email": "john@example.com",
-"password": "SecurePass123!",
-"contact": "1234567890"
+"email": "rrgawanderohit@gmail.com",
+"password": "123456",
+}'
+#### User Registration
+curl -X POST http://localhost:8001/api/v1/user/login
+-H "Content-Type: application/json"
+-d '{
+"email": "brgawande@gmail.com",
+"password": "123456",
 }'
 
-text
 
 #### Spatial Range Query
 curl -X POST http://localhost:8001/api/v1/poi/user/pois/search
@@ -326,7 +330,7 @@ curl -X POST http://localhost:8001/api/v1/poi/user/pois/search
 "distance": 5000
 }'
 
-text
+
 
 ---
 
@@ -360,13 +364,13 @@ text
 cd backend
 npm test
 
-text
+
 
 ### Run Frontend Tests
 cd frontend
 npm test
 
-text
+
 
 ### API Testing with Postman
 Import the provided Postman collection from `/docs/postman/EPLQ.postman_collection.json`
@@ -380,12 +384,12 @@ Import the provided Postman collection from `/docs/postman/EPLQ.postman_collecti
 1. **Build and Run**:
 docker-compose up --build
 
-text
+
 
 2. **Production Deployment**:
 docker-compose -f docker-compose.prod.yml up -d
 
-text
+
 
 ### Manual Deployment
 
@@ -396,14 +400,14 @@ npm run build
 Start with PM2
 pm2 start ecosystem.config.js
 
-text
+
 
 #### Frontend (React)
 Build
 npm run build
 
 Deploy to your preferred hosting (Vercel, Netlify, etc.)
-text
+
 
 ---
 
