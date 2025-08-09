@@ -16,242 +16,207 @@ import { useUserStore } from "@/store/useUserStore";
 import { useQueryLogStore } from "@/store/useQueryLogStore";
 
 const UserDashboard = () => {
-  const { user, checkAuthentication } = useUserStore();
+  const { user } = useUserStore();
   const { pois, queryPOIsInRange } = usePOIStore();
   const { logs, getUserLogs, hasFetchedLogs } = useQueryLogStore();
-  const [nearbyPOIs, setNearbyPOIs] = useState(0);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [nearbyCount, setNearbyCount] = useState(0);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    const initializeDashboard = async () => {
-      if (isInitialized) return;
-
-      // await checkAuthentication();
-
-      if (!hasFetchedLogs) {
-        await getUserLogs();
-      }
-
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(async (position) => {
-          await queryPOIsInRange({
-            longitude: position.coords.longitude,
-            latitude: position.coords.latitude,
-            distance: 5000,
-          });
+    if (initialized) return;
+    if (!hasFetchedLogs) getUserLogs();
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        await queryPOIsInRange({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          distance: 5000,
         });
-      }
+      });
+    }
+    setInitialized(true);
+  }, [initialized, hasFetchedLogs]);
 
-      setIsInitialized(true);
-    };
-
-    initializeDashboard();
-  }, [isInitialized, hasFetchedLogs]);
   useEffect(() => {
-    // Remove duplicates and set nearby POIs count
-    const uniquePOIs =
-      pois?.filter(
-        (poi, index, self) => index === self.findIndex((p) => p._id === poi._id)
-      ) || [];
-    setNearbyPOIs(uniquePOIs.length);
+    const unique = Array.from(new Map(pois.map((p) => [p._id, p])).values());
+    setNearbyCount(unique.length);
   }, [pois]);
 
-  // Remove duplicate logs
-  const uniqueLogs =
-    logs?.filter(
-      (log, index, self) => index === self.findIndex((l) => l._id === log._id)
-    ) || [];
-
-  const recentQueries = uniqueLogs.slice(0, 3);
-  const totalQueries = uniqueLogs.length;
-  const lastQueryDate =
-    uniqueLogs.length > 0 ? new Date(uniqueLogs[0].createdAt) : null;
-
-  // Remove duplicate POIs for display
-  const uniquePOIs =
-    pois?.filter(
-      (poi, index, self) => index === self.findIndex((p) => p._id === poi._id)
-    ) || [];
+  const uniqueLogs = Array.from(new Map(logs.map((l) => [l._id, l])).values());
+  const recent = uniqueLogs.slice(0, 3);
+  const lastDate =
+    uniqueLogs[0] && new Date(uniqueLogs[0].createdAt).toLocaleDateString();
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-lg">
-        <h1 className="text-3xl font-bold mb-2">
-          Welcome back, {user?.fullname || "User"}!
-        </h1>
-        <p className="text-blue-100 mb-4">
-          Discover encrypted Points of Interest with privacy protection
-        </p>
-        <div className="flex gap-3">
-          <Button variant="secondary">
-            <Search className="mr-2 h-4 w-4" />
-            Search POIs
-          </Button>
-          <Button
-            variant="outline"
-            className="text-white border-white hover:bg-white hover:text-blue-600"
+    <div className="relative bg-neutral-900 min-h-screen p-6 space-y-8">
+      {/* Ambient Neon Blobs */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-fuchsia-600/20 blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl animate-pulse delay-2000" />
+      </div>
+
+      {/* Welcome Card */}
+      <Card className="bg-gradient-to-r from-cyan-500 to-fuchsia-500 text-white neon-border shadow-fuchsia-500/30">
+        <CardContent className="p-8">
+          <h1 className="text-4xl text-cyan-800 font-extrabold neon-text">
+            Welcome back, {user?.fullname || "User"}!
+          </h1>
+          <p className="mt-2 text-cyan-100">
+            Discover encrypted Points of Interest with privacy protection.
+          </p>
+          <div className="mt-4 flex gap-4">
+            <Button className="neon-gradient neon-border text-white">
+              <Search className="mr-2" /> Search POIs
+            </Button>
+            <Button
+              variant="outline"
+              className="text-white border-white hover:bg-white/10"
+            >
+              <History className="mr-2" /> View History
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Statistics Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {[
+          {
+            icon: MapPin,
+            label: "Nearby POIs",
+            value: nearbyCount,
+            color: "text-cyan-400",
+          },
+          {
+            icon: TrendingUp,
+            label: "Total Queries",
+            value: uniqueLogs.length,
+            color: "text-green-400",
+          },
+          {
+            icon: Shield,
+            label: "Privacy Level",
+            value: "High",
+            color: "text-purple-400",
+          },
+          {
+            icon: Clock,
+            label: "Last Query",
+            value: lastDate || "Never",
+            color: "text-orange-400",
+          },
+        ].map(({ icon: Icon, label, value, color }, i) => (
+          <Card
+            key={i}
+            className="bg-neutral-800/60 neon-border shadow-cyan-500/10"
           >
-            <History className="mr-2 h-4 w-4" />
-            View History
-          </Button>
-        </div>
+            <CardContent className="flex items-center p-6">
+              <Icon className={`h-8 w-8 ${color}`} />
+              <div className="ml-4">
+                <p className="text-sm text-neutral-400">{label}</p>
+                <p className={`text-2xl font-bold ${color}`}>{value}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="flex items-center p-6">
-            <MapPin className="h-8 w-8 text-blue-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted-foreground">
-                Nearby POIs
-              </p>
-              <p className="text-2xl font-bold">{nearbyPOIs}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="flex items-center p-6">
-            <TrendingUp className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted-foreground">
-                Total Queries
-              </p>
-              <p className="text-2xl font-bold">{totalQueries}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="flex items-center p-6">
-            <Shield className="h-8 w-8 text-purple-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted-foreground">
-                Privacy Level
-              </p>
-              <p className="text-2xl font-bold text-green-600">High</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="flex items-center p-6">
-            <Clock className="h-8 w-8 text-orange-600" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted-foreground">
-                Last Query
-              </p>
-              <p className="text-sm font-bold">
-                {lastQueryDate ? lastQueryDate.toLocaleDateString() : "Never"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Activity and Quick Actions */}
+      {/* Recent & Nearby */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Queries */}
-        <Card>
+        <Card className="bg-neutral-800/60 neon-border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <History className="h-5 w-5" />
-              Recent Queries
+            <CardTitle className="flex items-center gap-2 text-white">
+              <History /> Recent Queries
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {recentQueries.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">
-                No recent queries. Start exploring!
+            {recent.length === 0 ? (
+              <p className="text-neutral-400 text-center py-8">
+                No recent queries.
               </p>
             ) : (
-              <div className="space-y-3">
-                {recentQueries.map((query) => (
-                  <div
-                    key={query._id}
-                    className="flex justify-between items-center p-3 bg-gray-50 rounded"
-                  >
-                    <div>
-                      <Badge variant="outline" className="mb-1">
-                        {query.queryType}
-                      </Badge>
-                      <p className="text-sm text-muted-foreground">
-                        {query.resultCount} results found
-                      </p>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(query.createdAt).toLocaleDateString()}
-                    </span>
+              recent.map((q) => (
+                <div
+                  key={q._id}
+                  className="flex justify-between p-4 bg-neutral-700/50 rounded mb-2"
+                >
+                  <div>
+                    <Badge
+                      variant="outline"
+                      className="border-cyan-400 text-cyan-400 neon-border"
+                    >
+                      {q.queryType}
+                    </Badge>
+                    <p className="text-sm text-neutral-400">
+                      {q.resultCount} results
+                    </p>
                   </div>
-                ))}
-              </div>
+                  <span className="text-xs text-neutral-500">
+                    {new Date(q.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              ))
             )}
           </CardContent>
         </Card>
 
-        {/* Nearby POIs */}
-        <Card>
+        <Card className="bg-neutral-800/60 neon-border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Nearby Points of Interest
+            <CardTitle className="flex items-center gap-2 text-white">
+              <MapPin /> Nearby Points of Interest
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {uniquePOIs.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">
-                No POIs found in your area. Try searching a different location.
+            {pois.length === 0 ? (
+              <p className="text-neutral-400 text-center py-8">
+                No POIs found.
               </p>
             ) : (
-              <div className="space-y-3">
-                {uniquePOIs.slice(0, 3).map((poi) => (
-                  <div
-                    key={poi._id}
-                    className="p-3 border rounded hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-medium">{poi.title}</h4>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+              pois.slice(0, 3).map((poi) => (
+                <div
+                  key={poi._id}
+                  className="p-4 bg-neutral-700/50 rounded mb-2 flex justify-between items-start"
+                >
+                  <div>
+                    <h4 className="font-medium text-white">{poi.title}</h4>
+                    <p className="text-sm text-neutral-400 line-clamp-2">
                       {poi.description}
                     </p>
-                    <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                      <MapPin className="h-3 w-3" />
-                      <span>
-                        {poi.location.coordinates}, {poi.location.coordinates}
-                      </span>
-                    </div>
                   </div>
-                ))}
-              </div>
+                  <Button variant="ghost" className="text-cyan-400">
+                    <Eye />
+                  </Button>
+                </div>
+              ))
             )}
           </CardContent>
         </Card>
       </div>
 
       {/* Quick Actions */}
-      <Card>
+      <Card className="bg-neutral-800/60 neon-border">
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
+          <CardTitle className="text-white">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="h-20 flex-col gap-2" variant="outline">
-              <Search className="h-6 w-6" />
-              <span>Search POIs</span>
+            <Button
+              variant="outline"
+              className="text-cyan-400 border-cyan-400 hover:bg-cyan-400/10 neon-border"
+            >
+              <Search /> Search POIs
             </Button>
-            <Button className="h-20 flex-col gap-2" variant="outline">
-              <History className="h-6 w-6" />
-              <span>View History</span>
+            <Button
+              variant="outline"
+              className="text-cyan-400 border-cyan-400 hover:bg-cyan-400/10 neon-border"
+            >
+              <History /> View History
             </Button>
-            <Button className="h-20 flex-col gap-2" variant="outline">
-              <Shield className="h-6 w-6" />
-              <span>Privacy Settings</span>
+            <Button
+              variant="outline"
+              className="text-cyan-400 border-cyan-400 hover:bg-cyan-400/10 neon-border"
+            >
+              <Shield /> Privacy Settings
             </Button>
           </div>
         </CardContent>
