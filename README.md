@@ -114,6 +114,17 @@ EPLQ is a cutting-edge **Location-Based Query System** that provides privacy-pre
 
 ---
 
+## 📷 Screen-Shots
+<img width="1869" height="876" alt="Screenshot 2025-08-13 142133" src="https://github.com/user-attachments/assets/881a1949-7b6c-4f2c-aaeb-ff4643b6abd0" />
+<img width="1872" height="884" alt="Screenshot 2025-08-13 142057" src="https://github.com/user-attachments/assets/3618c826-a637-40af-aa34-bd5c02225fcb" />
+<img width="1168" height="881" alt="Screenshot 2025-08-13 142031" src="https://github.com/user-attachments/assets/9e83fb10-ba8f-46f8-a4d9-04b44c487ad1" />
+<img width="1871" height="806" alt="Screenshot 2025-08-13 141859" src="https://github.com/user-attachments/assets/2d42abec-8853-467d-907f-a053672c5e29" />
+<img width="1870" height="795" alt="Screenshot 2025-08-13 141435" src="https://github.com/user-attachments/assets/9435f574-e74a-4346-a824-e15066697a1d" />
+<img width="1346" height="656" alt="Screenshot 2025-08-13 141425" src="https://github.com/user-attachments/assets/e395a38f-6638-4072-85d1-e3540f1fd3ce" />
+<img width="1511" height="782" alt="Screenshot 2025-08-13 141414" src="https://github.com/user-attachments/assets/a108dc70-f0fe-4077-ad41-4c29b6fd3111" />
+<img width="1886" height="739" alt="Screenshot 2025-08-13 142201" src="https://github.com/user-attachments/assets/2cbade4b-f192-494f-b5d1-418d34e1d450" />
+
+
 ## 🚀 Getting Started
 
 ### Prerequisites
