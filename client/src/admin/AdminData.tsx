@@ -11,14 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Search,
-  Filter,
-  Download,
-  Users,
-  UserCheck,
-  UserX,
-} from "lucide-react";
+import { Search, Download, Users, UserCheck, UserX } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 

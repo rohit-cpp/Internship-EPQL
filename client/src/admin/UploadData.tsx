@@ -137,7 +137,7 @@ const UploadData = () => {
           }));
           toast.success("Current location obtained successfully");
         },
-        (error) => {
+        () => {
           toast.error("Failed to get current location");
         }
       );

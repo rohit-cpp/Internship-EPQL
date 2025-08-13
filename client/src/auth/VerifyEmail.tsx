@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useUserStore } from "@/store/useUserStore";
-import { Loader2, Shield, Mail } from "lucide-react";
+import { Loader2, Mail } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 

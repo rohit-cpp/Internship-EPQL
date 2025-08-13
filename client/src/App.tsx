@@ -26,7 +26,7 @@ import ManagePOI from "./admin/ManagePOI";
 import UploadData from "./admin/UploadData";
 
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, user } = useUserStore();
+  const { isAuthenticated } = useUserStore();
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   MapPin,
   Search,
-  Filter,
   Eye,
   Edit,
   Trash2,

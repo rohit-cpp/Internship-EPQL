@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,6 @@ import {
   Search,
   MapPin,
   Crosshair,
-  Filter,
   Eye,
   Lock,
   Loader2,
@@ -58,7 +57,7 @@ const SearchPOI = () => {
           setIsGettingLocation(false);
           toast.success("Current location obtained successfully");
         },
-        (error) => {
+        () => {
           setIsGettingLocation(false);
           toast.error("Failed to get current location");
         },
