@@ -19,10 +19,24 @@ app.use(express.urlencoded({
 }));
 app.use(express.json());
 app.use(cookieParser());
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://frontend-epql-mr7jxp8od-rohit-gawandes-projects.vercel.app"
+];
 const corsOptions = {
-    origin:process.env.FRONTEND_URL,
-    credentials:true
-}
+    origin: (origin: string | undefined, callback: Function) => {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+};
 app.use(cors(corsOptions));
 
 
