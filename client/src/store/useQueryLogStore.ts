@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import axios from "axios";
 import { toast } from "sonner";
 
-const API_QUERYLOG_ENDPOINT = "http://localhost:8001/api/v1/query";
+const API_QUERYLOG_ENDPOINT = `${import.meta.env.VITE_BACKEND_LINK}/api/v1/query`;
 
 type QueryLog = {
   _id: string;

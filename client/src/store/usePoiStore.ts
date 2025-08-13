@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import axios from "axios";
 import { toast } from "sonner";
 
-const API_POI_ENDPOINT = "http://localhost:8001/api/v1/poi";
+const API_POI_ENDPOINT = `${import.meta.env.VITE_BACKEND_LINK}/api/v1/poi`;
 
 type POI = {
   _id: string;
