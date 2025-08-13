@@ -50,7 +50,12 @@ export const useUserStore = create<UserState>()(
         try {
           set({ loading: true });
           // Update the endpoint to match your backend!
-         const response = await axios.get(`${API_END_POINT}/all`); 
+          const response = await axios.get(`${API_END_POINT}/all`,
+           {
+    headers: { "Content-Type": "application/json" },
+    withCredentials: true, 
+  }
+         ); 
           if (response.data.success) {
             set({
               allUsers: response.data.users,
@@ -75,6 +80,7 @@ export const useUserStore = create<UserState>()(
           const response = await axios.post(`${API_END_POINT}/signup`, input, {
             headers: {
               "Content-Type": "application/json",
+                 withCredentials: true, 
             },
           });
           if (response.data.success) {
@@ -97,6 +103,7 @@ export const useUserStore = create<UserState>()(
           const response = await axios.post(`${API_END_POINT}/login`, input, {
             headers: {
               "Content-Type": "application/json",
+                 withCredentials: true, 
             },
           });
           if (response.data.success) {
@@ -122,6 +129,7 @@ export const useUserStore = create<UserState>()(
             {
               headers: {
                 "Content-Type": "application/json",
+                   withCredentials: true, 
               },
             }
           );
@@ -142,7 +150,12 @@ export const useUserStore = create<UserState>()(
       checkAuthentication: async () => {
         try {
           set({ isCheckingAuth: true });
-          const response = await axios.get(`${API_END_POINT}/check-auth`);
+          const response = await axios.get(`${API_END_POINT}/check-auth`, {
+            headers: {
+              "Content-Type": "application/json",
+              withCredentials: true,
+            }
+          });
           if (response.data.success) {
             set({
               user: response.data.user,
@@ -160,7 +173,12 @@ export const useUserStore = create<UserState>()(
       logout: async () => {
         try {
           set({ loading: true });
-          const response = await axios.post(`${API_END_POINT}/logout`);
+          const response = await axios.post(`${API_END_POINT}/logout`, {
+            headers: {
+              "Content-Type": "application/json",
+              withCredentials: true,
+            }
+          });
           if (response.data.success) {
             toast.success(response.data.message);
             set({ loading: false, user: null, isAuthenticated: false });
@@ -174,7 +192,12 @@ export const useUserStore = create<UserState>()(
           set({ loading: true });
           const response = await axios.post(
             `${API_END_POINT}/forgot-password`,
-            { email }
+            { email }, {
+            headers: {
+              "Content-Type": "application/json",
+              withCredentials: true,
+            }
+          }
           );
           if (response.data.success) {
             toast.success(response.data.message);
@@ -190,7 +213,12 @@ export const useUserStore = create<UserState>()(
           set({ loading: true });
           const response = await axios.post(
             `${API_END_POINT}/reset-password/${token}`,
-            { newPassword }
+            { newPassword }, {
+            headers: {
+              "Content-Type": "application/json",
+              withCredentials: true,
+            }
+          }
           );
           if (response.data.success) {
             toast.success(response.data.message);
@@ -210,6 +238,7 @@ export const useUserStore = create<UserState>()(
             {
               headers: {
                 "Content-Type": "application/json",
+                withCredentials: true,
               },
             }
           );
