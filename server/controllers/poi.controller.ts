@@ -7,14 +7,22 @@ import { encryptPOIData, decryptPOIData as decryptPOIUtility } from "../utlis/en
 // Create POI (ADMIN)
 export const createPOI = async (req: Request, res: Response) => {
   try {
-    // Only admin middleware should allow here
     const { title, description, longitude, latitude, plainData } = req.body;
+
+    // Validate & convert
+    const lng = parseFloat(longitude);
+    const lat = parseFloat(latitude);
+
+    if (isNaN(lng) || isNaN(lat)) {
+      return res.status(400).json({ message: "Invalid coordinates" });
+    }
+
     const encryptedData = encryptPOIData(plainData);
 
     const poi = await POI.create({
-      title,
-      description,
-      location: { type: "Point", coordinates: [longitude, latitude] },
+      title: title.trim(),
+      description: description.trim(),
+      location: { type: "Point", coordinates: [lng, lat] },
       encryptedData,
       createdBy: req.id,
     });
@@ -24,6 +32,7 @@ export const createPOI = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Failed to create POI" });
   }
 };
+
 
 // Admin: List all (with pagination)
 export const listAllPOIs = async (req: Request, res: Response) => {

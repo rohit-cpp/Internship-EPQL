@@ -45,29 +45,51 @@ export const usePOIStore = create<POIState>()(
       decryptedPOIData: null,
       loading: false,
 
-      createPOI: async (input) => {
-        try {
-          set({ loading: true });
-          const token = localStorage.getItem("token") || "";
-          const response = await axios.post(`${API_POI_ENDPOINT}/admin/poi`, input, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
+    createPOI: async (input) => {
+  try {
+    set({ loading: true });
 
-          if (response.data.success) {
-            toast.success("POI created successfully");
-            set((state) => ({
-              pois: [response.data.poi, ...state.pois],
-              loading: false,
-            }));
-          }
-        } catch (error: any) {
-          toast.error(error.response?.data?.message || "Error creating POI");
-          set({ loading: false });
-        }
-      },
+    // Ensure latitude and longitude are numbers
+    const payload = {
+      ...input,
+      latitude: Number(input.latitude),
+      longitude: Number(input.longitude),
+    };
+
+    if (isNaN(payload.latitude) || isNaN(payload.longitude)) {
+      toast.error("Invalid latitude or longitude");
+      set({ loading: false });
+      return;
+    }
+
+    const token = localStorage.getItem("token") || "";
+    const response = await axios.post(
+      `${API_POI_ENDPOINT}/admin/poi`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.data.success) {
+      toast.success("POI created successfully");
+      set((state) => ({
+        pois: [response.data.poi, ...state.pois],
+        loading: false,
+      }));
+    } else {
+      toast.error(response.data.message || "Error creating POI");
+      set({ loading: false });
+    }
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Error creating POI");
+    set({ loading: false });
+  }
+},
+
 
       listAllPOIs: async () => {
         try {

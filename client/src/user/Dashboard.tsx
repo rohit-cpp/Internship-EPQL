@@ -58,7 +58,7 @@ const UserDashboard = () => {
       {/* Welcome Card */}
       <Card className="bg-gradient-to-r from-cyan-500 to-fuchsia-500 text-white neon-border shadow-fuchsia-500/30">
         <CardContent className="p-8">
-          <h1 className="text-4xl text-cyan-800 font-extrabold neon-text">
+          <h1 className="text-5xl text-yellow-400 font-extrabold text-neon">
             Welcome back, {user?.fullname || "User"}!
           </h1>
           <p className="mt-2 text-cyan-100">
@@ -70,7 +70,7 @@ const UserDashboard = () => {
             </Button>
             <Button
               variant="outline"
-              className="text-white border-white hover:bg-white/10"
+              className="text-black border-white hover:bg-white/10"
             >
               <History className="mr-2" /> View History
             </Button>

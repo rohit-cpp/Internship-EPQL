@@ -127,7 +127,7 @@ const AdminLinks = () => (
     {/* Dropdown for admin panel */}
     <Menubar>
       <MenubarMenu>
-        <MenubarTrigger className="flex items-center gap-1 cursor-pointer text-neutral-300 hover:text-cyan-400">
+        <MenubarTrigger className="flex items-center gap-1 cursor-pointer text-black hover:text-cyan-400">
           <BarChart3 className="h-4 w-4" />
           Admin&nbsp;Panel
         </MenubarTrigger>
@@ -164,7 +164,7 @@ const UserLinks = () => (
     {/* User dropdown */}
     <Menubar>
       <MenubarMenu>
-        <MenubarTrigger className="flex items-center gap-1 cursor-pointer text-neutral-300 hover:text-cyan-400">
+        <MenubarTrigger className="flex items-center gap-1 cursor-pointer text-black hover:text-cyan-400">
           <User className="h-4 w-4" />
           User&nbsp;Menu
         </MenubarTrigger>

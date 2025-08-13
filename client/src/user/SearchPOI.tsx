@@ -250,10 +250,11 @@ const SearchPOI = () => {
                       </Badge>
                     </div>
 
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                      <MapPin className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
                       <span>
-                        {poi.location.coordinates}, {poi.location.coordinates}
+                        Lat: {poi.location.coordinates[1].toFixed(5)}, Lng:{" "}
+                        {poi.location.coordinates[0].toFixed(5)}
                       </span>
                     </div>
 

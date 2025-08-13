@@ -17,8 +17,8 @@ import SearchPOI from "./user/SearchPOI";
 import Decrypt from "./user/Decrypt";
 import History from "./user/History";
 import { useUserStore } from "./store/useUserStore";
-// import { useEffect } from "react";
-// import Loading from "./components/ui/Loading";
+import { useEffect } from "react";
+import Loading from "./components/ui/Loading";
 import AdminDashboard from "./admin/AdminDashboard";
 import AdminData from "./admin/AdminData";
 import AdminLogs from "./admin/AdminLogs";
@@ -164,12 +164,12 @@ const appRouter = createBrowserRouter([
   },
 ]);
 function App() {
-  // const { checkAuthentication, isCheckingAuth } = useUserStore();
-  // useEffect(() => {
-  //   // checking auth every time when page isloaded
-  //   checkAuthentication();
-  // }, [checkAuthentication]);
-  // if (isCheckingAuth) return <Loading />;
+  const { checkAuthentication, isCheckingAuth } = useUserStore();
+  useEffect(() => {
+    // checking auth every time when page isloaded
+    checkAuthentication();
+  }, [checkAuthentication]);
+  if (isCheckingAuth) return <Loading />;
   return (
     <main>
       <RouterProvider router={appRouter} />
